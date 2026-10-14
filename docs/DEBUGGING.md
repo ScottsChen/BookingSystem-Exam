@@ -40,8 +40,21 @@ Angav 1046 och bokningen försvann.
 **Problem:**
 Programmet accepterade när starttiden vart seanre än sluttiden.
 **Cause:**
-BookingResult Validate Metoden hade start==slut, ända kraven var att dom inte skulle matcha
+BookingService,BookingResult, Validate Metodens if sats hade start==slut, ända kraven var att dom inte skulle matcha
 **Solution:**
 Jag ändrade kravet till Start > Slut
 **Testing:
 Testning gav mig: ("The start time must be earlier than the end time.") när jag testade Start 11:00, Slut 10:00.
+
+
+## Bug 5
+**Problem:**
+Programmet tillåter överlappning
+**Cause:**
+BookingService, BookingResult, Validate var hasOverLap
+**Solution:**
+Jag ändrade kravet där till booking.EndTime > existing.StartTime &&
+booking.StartTime < existing.EndTime);
+För att Överlappning ska ske måste detta påstående vara sant: den nya bokningen börjar innan den befintliga slutar och den nya bokningen slutar efter den befintliga börjar.
+**Testing:
+Testning gav mig: "The room is already booked during the selected time."
