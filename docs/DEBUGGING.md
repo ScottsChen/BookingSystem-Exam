@@ -1,35 +1,47 @@
 # Debugging – Booking System
 
 ## Bug 1
+
 **Problem:**
 Datum och tid för bokningarna är osorterade.
+
 **Cause:**
 BookingService GetActiveBookings saknar filtreringsinnehåll
+
 **Solution:**
 Lägger till Filtrering, Aktiva bokningar syns, Bokingarna visas först i datums ordning och sedan StartTids ordning.
+
 **Testing:**
 Testkörning visar att aktiva bokningar visas i ordningen datum, starttid.
 
 
 ## Bug 2
+
 **Problem:**
 Hittar inte Bokning om man inte stavar Exakt
+
 **Cause:**
 Metoden saknar Contains(name,StringComparison.OrdinalIgnoreCase), Denna kod löser det problemmet.
+
 **Solution:**
 har nu lagt till hjälp medel i metoden så att programmet hittar namnet vid använding av små eller stora bokstäver samt matchande bokstäver och att bokningen måste vara aktiv för att kunna visas med hjälp av &&.
+
 **Testing:
 case 2 kan nu känna igen bokningar som delar samma bokstav och små bokstäver.
 
 
 
 ## Bug 3
+
 **Problem:**
 Avbokning gick inte att utföra
+
 **Cause:**
 BookingService, BookingResult Cancel
+
 **Solution:**
-Lägga till kontroller, om bokningen hittas så finns det inget att avboka, annars Avbokas det och sparar ändringarna i lagringen och vi får ett resultat tillbaka som berättar booking is cancelled.
+Lägga till kontroller, om bokningen inte hittas så finns det inget att avboka, annars Avbokas det och sparar ändringarna i lagringen och vi får ett resultat tillbaka som berättar booking is cancelled.
+
 **Testing: 
 Angav 1046 och bokningen försvann.
 
@@ -37,35 +49,47 @@ Angav 1046 och bokningen försvann.
 
 
 ## Bug 4
+
 **Problem:**
 Programmet accepterade när starttiden vart senare än sluttiden.
+
 **Cause:**
 BookingService,BookingResult, Validate Metodens if sats hade start==slut, ända kraven var att dom inte skulle matcha
+
 **Solution:**
-Jag ändrade kravet till Start > Slut
+Jag ändrade kravet if(booking.StartTime >= booking.EndTime)
+
 **Testing:
 Testning gav mig: ("The start time must be earlier than the end time.") när jag testade Start 11:00, Slut 10:00.
 
 
 ## Bug 5
+
 **Problem:**
 Programmet tillåter överlappning
+
 **Cause:**
 BookingService, BookingResult, Validate var hasOverLap
+
 **Solution:**
-Jag ändrade kravet där till booking.EndTime > existing.StartTime &&
+Jag ändrade kravet där till (booking.EndTime > existing.StartTime &&
 booking.StartTime < existing.EndTime);
 För att Överlappning ska ske måste detta påstående vara sant: den nya bokningen börjar innan den befintliga slutar och den nya bokningen slutar efter den befintliga börjar.
 **Testing:
+
 Testning gav mig: "The room is already booked during the selected time."
 
 
 ## Bug 6
+
 **Problem:**
-Programmet kraschar när vi bokstaverar siffror på Participants.
+Jag ville kolla om det faktiskt skulle krascha eller inte och Programmet kraschar när jag bokstaverar siffror på Participants.
+
 **Cause:**
-Problemmet låg i BookingConsole, int.Parse, om användaren skriver "Ett" kastar den ett FormatException, vilket kan krascha programmet.
+Problemet låg i BookingConsole eftersom det är där vi hanterar användarens inmatning i CreateBooking-metoden., jag kollade då på metoden CreateBooking för där case 3 ska hämta ifrån, hittade int.Parse! om användaren skriver "Ett" kastar den ett FormatException, vilket kan krascha programmet och det vill vi undvika.
+
 **Solution:**
 Jag ersatte den med int.TryParse för att behålla samma funktion och förhindra Krasch, vi utvecklade raden med "!" som vänder på bool värdet så att det blir true i detta fall för att ge oss en return, Console.WriteLine visas.
+
 **Testing:
-Testning gav mig: "Invalid number of participants", Vi vill ju bara ha heltal
+Testning gav mig: "Invalid number of participants", Vi vill ju bara ha heltal, Jag började att välja Case 3, fyllde i allt och när jag kom ner till Participants så gjorde den det jag ville.
