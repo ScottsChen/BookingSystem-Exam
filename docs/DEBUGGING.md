@@ -38,7 +38,7 @@ Angav 1046 och bokningen försvann.
 
 ## Bug 4
 **Problem:**
-Programmet accepterade när starttiden vart seanre än sluttiden.
+Programmet accepterade när starttiden vart senare än sluttiden.
 **Cause:**
 BookingService,BookingResult, Validate Metodens if sats hade start==slut, ända kraven var att dom inte skulle matcha
 **Solution:**
@@ -58,3 +58,14 @@ booking.StartTime < existing.EndTime);
 För att Överlappning ska ske måste detta påstående vara sant: den nya bokningen börjar innan den befintliga slutar och den nya bokningen slutar efter den befintliga börjar.
 **Testing:
 Testning gav mig: "The room is already booked during the selected time."
+
+
+## Bug 6
+**Problem:**
+Programmet kraschar när vi bokstaverar siffror på Participants.
+**Cause:**
+Problemmet låg i BookingConsole, int.Parse, om användaren skriver "Ett" kastar den ett FormatException, vilket kan krascha programmet.
+**Solution:**
+Jag ersatte den med int.TryParse för att behålla samma funktion och förhindra Krasch, vi utvecklade raden med "!" som vänder på bool värdet så att det blir true i detta fall för att ge oss en return, Console.WriteLine visas.
+**Testing:
+Testning gav mig: "Invalid number of participants", Vi vill ju bara ha heltal
