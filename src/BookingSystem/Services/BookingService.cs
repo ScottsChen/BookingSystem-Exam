@@ -1,5 +1,6 @@
 using BookingSystem.Models;
 using BookingSystem.Repositories;
+using System.Reflection.Metadata.Ecma335;
 
 namespace BookingSystem.Services;
 
@@ -25,12 +26,12 @@ public class BookingService(IBookingRepository repository)
 
     }
 
-    public IReadOnlyList<Booking> Search(string searchTerm)
+    public IReadOnlyList<Booking> Search(string name)
     {
         return repository.GetAll()
             .Where(booking =>
                 !booking.IsCancelled &&
-                booking.CustomerName.Contains(searchTerm))
+                booking.CustomerName.Contains(name,StringComparison.OrdinalIgnoreCase))
             .ToList();
     }
 
@@ -52,8 +53,20 @@ public class BookingService(IBookingRepository repository)
 
     public BookingResult Cancel(int bookingId)
     {
-        throw new NotImplementedException();
-    }
+        var booking = repository.GetAll()
+            .FirstOrDefault(b => b.Id == bookingId);
+
+        if (booking == null)
+        {
+            return BookingResult.Failure("Booking not found.");
+        }
+
+        booking.IsCancelled = true;
+
+        repository.Save();
+        return BookingResult.Success("Booking is cancelled");
+    }   
+     
 
     private BookingResult Validate(Booking booking)
     {
